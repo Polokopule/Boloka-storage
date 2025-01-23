@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BOLOKA Storage App, your trusted partner in secure and efficient file management. Founded by Poloko Pule, our mission is to simplify how you store, organize, and manage your digital files.">
+	  <meta name="keywords" content="storage app, boloka app, file manager, Free online storage, online storage,Lesotho online storage, apps by poloko pule, apps by BD-school of creation, 2025 apps release, 2025 apps, Etsa fela plan, Mahala plan , Morena plan">
+  	<meta name="author" content="Poloko Edward Pule">
+<link rel="icon" href="logo.png">
+  <title>Boloka Online Storage App</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0;
+          height: 80vh;
+        overflow-y: scroll;
+
+    
+    
+     }
+    nav { background: #fff;
+    border-bottom: 1px solid #007bff; padding: 10px; color: white; display: flex; justify-content: space-between;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+    nav a {  text-align: center;color:white; 
+    background:#007bff; width: min(70px); font-size: 12px;border-radius: 10px;padding: 10px;
+    text-decoration: none; margin: 0 10px; }
+    .hidden { display: none; }
+    .container { padding: 20px; }
+    #plans, #auth, #mainContent { display: none; }
+    #fileList div { margin: 5px 0; padding: 10px; background: #f1f1f1; border-radius: 5px; }
+    .loading-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); color: white; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    
+    
+     .head{
+          padding:20px;
+          font-weight:600;
+          letter-spacing: 2px;
+          position: relative;
+          width:50%;
+          font-size: 3em;
+          
+      }
+      
+      
+     
+     h2{
+         position: relative;
+         
+     }
+     .card{
+         padding: 20px;
+  max-width: 70%;
+  margin: auto;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 50px;
+
+     }
+     #plans{
+         display: flex;flex-wrap: wrap;
+         height: 90vh;
+         padding:30px;
+         
+         overflow-y: scroll;
+     }
+      .flex{
+          display: flex;
+           gap: 10px;
+      }
+      
+      .flex > button:first-child{
+      
+          width: min(60%);
+          
+      }
+      
+      .flex > button:last-child{
+        background-color: #dedede;  
+        color:#000;
+      }
+      .m{
+          background:#ffa995;
+          color:#000;
+         transition: all 0.3s;
+         letter-spacing: 1px;
+      }
+      .m:hover{
+          color:#fff;
+          letter-spacing: 3px;
+      }
+ .l:hover{
+          color:#fff;
+          letter-spacing: 3px;
+      }
+
+    .l{
+          background:#00ffc0;
+          color:#000;
+          transition: all 0.3s;
+         letter-spacing: 1px;
+      }
+h2:before {
+         content:"";
+         width:100px;height:5px;
+         background:#007bff;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+h2:before {
+         content:"";
+         width:100px;height:5px;
+         background:#007bff;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+     
+     .efp,.mp{
+         position:relative;
+     }
+   .efp:before {
+         content:"";
+         width:100px;height:5px;
+         background:#ffa995;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+    .mp:before {
+         content:"";
+         width:100px;height:5px;
+         background:#00ffc0;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+     
+    #plans > .card:nth-child(1){
+         border-top: 20px solid #007bff;
+     }
+     .card{
+         border-top: 20px solid  #007bff;
+         box-shadow: 0 0 10px rgba(0, 123, 255, 0.1);
+     }
+ 
+    .pm{
+         border-top: 20px solid #00ffc0;
+         box-shadow: 0 0 10px rgba(0, 255, 192, 0.1);
+     }
+    .pfe{
+         border-top: 20px solid #ffa995;
+         box-shadow: 0 0 10px rgba(255, 149, 169, 0.1);
+     }
+    .plan1{
+        border-top: 20px solid #007bff;
+    }
+    #userMenu{
+        display: flex;
+       float: right;
+       flex-wrap: wrap;
+       gap: 4px;
+    }
+    #alert{
+        padding: 10px;
+        
+        border-radiua: 5px;
+       display:none;
+       
+       
+    }
+    
+    .good{
+        background: green;color:#fff;
+    }
+    .bad{
+        background:red;
+        color:#fff;
+    }
+    .s{
+        font-size: 10px;
+    }
+    .footer{
+    padding: 10px;
+    width: min(90%);
+    background:#fff;
+    position: absolute;
+    bottom:0px;
+    left:0;
+    z-index: 1;
+    }
+    textarea {
+        width: min(90%);
+        padding: 10px;
+        outline: none;
+    }
+    
+    .modal{
+        position:fixed;
+        top:0;
+        left:0;
+        width: 100%;
+        height: 100vh;
+        display: none;
+        flex-direction: column;
+        align-items:center;
+        justify-content: center;
+        background: rgba(0,0,0,0.1);
+        z-index: 1;
+    }
+    .cont{
+        padding:20px;
+        background: #fff;
+        width: min(50%);
+        border-radius: 10px;
+        
+    }
+   
+  </style>
+</head>
+<body>
+  <header id="navbar">
+    <nav>
+      <span id="appTitle">
+          <img src="b.jpg" width="150px" alt="">
+           </span>
+      <div id="userMenu">
+        
+        <a href="index.html" id="showHome" >home</a>
+        
+      </div>
+    </nav>
+  </header>
+
+ 
+    <!-- Main Content -->
+  <div id="mainContent" class="container">
+    
+    <input type="file" id="fileInput"><br><br>
+    <button id="uploadFiles">Upload File</button>
+      </div>
+<div class="modal">
+    
+    <div class="cont">
+        <h2>Title for modal</h2>
+        <p>Message for modal</p>
+    </div>
+</div>
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyABQqlqvqqsrb2B7K8URa3Mj2BToXsabPQ",
+      authDomain: "black-dox.firebaseapp.com",
+      databaseURL: "https://black-dox.firebaseio.com",
+      projectId: "black-dox",
+      storageBucket: "black-dox.appspot.com",
+      messagingSenderId: "45035762443",
+      appId: "1:45035762443:web:4101a6774e6f4f1d15e80e",
+      measurementId: "G-B7HB0T95TP"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+    const database = firebase.database();
+
+    // DOM Elements
+    const plans = document.getElementById("plans");
+    const authDiv = document.getElementById("auth");
+    const registerDiv = document.getElementById("register");
+    const loginDiv = document.getElementById("login");
+    const mainContent = document.getElementById("mainContent");
+    const fileInput = document.getElementById("fileInput");
+    const fileList = document.getElementById("fileList");
+    const loadingModal = document.getElementById("loadingModal");
+   
+    var showhome = document.querySelector("#showHome");
+    var showlogin = document.querySelector("#loginNav");
+    var efp = document.querySelector(".m");
+    var mp = document.querySelector(".l");
+    var EFP = document.querySelector("#EFP");
+    var MP = document.querySelector("#MP");
+    var title = document.querySelector("#appTitle");
+    var logout = document.querySelector("#logoutNav");
+    var about = document.querySelector("#about");
+    var us = document.querySelector("#aboutUs");
+    var modal = document.querySelector (".modal");
+    var mt = document.querySelector(".cont > h2");
+    var md = document.querySelector(".cont > p");
+    // Show Register Form
+    
+function open() {
+   modal.style.display="flex";
+}
+function close() {
+   modal.style.display="none";
+}
+
+    
+        
+   
+    // Monitor Auth State
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        
+        
+        mainContent.style.display = "block";
+        document.getElementById("logoutNav").classList.remove("hidden");
+        document.getElementById("loginNav").classList.add("hidden");
+        loadUserFiles(user.uid);
+        var em =   localStorage.getItem("email");
+     title.innerHTML=`<h2>${user.email.split("@")[0]}</h2>`;
+     showlogin.classList.add("hidden");
+     logout.classList.remove("hidden");
+     us.classList.add("hidden");
+     about.classList.add("hidden");
+     showhome.classList.add("hidden");
+     
+     
+      } else {
+        mainContent.style.display = "none";
+        document.write(`You have to login in order to upload files , <a href="index.html">Login Now</a>`);
+        
+        
+     title.innerHTML=`<img src="b.jpg" width="150px" alt="">`;
+     about.classList.remove("hidden");
+      }
+    });
+document.getElementById("fileInput").addEventListener("change", (event) => {
+  event.preventDefault();
+  
+  });
+  
+   
+
+var plan="Mahala";
+
+    // Upload File
+document.getElementById("uploadFiles").addEventListener("click", (event) => {
+  event.preventDefault(); // Prevent page refresh
+
+  const file = fileInput.files[0];
+ var type = file.name.split(".")[1];
+ if(plan != "Mahala" && type != "jpg" || type != "png" ){
+    open();
+   mt.innerText="Out of Your Plan";
+    md.innerHTML="Your currently using Mahala plan which does not allow you to store other files rather than images";
+    setTimeout(close,3000); 
+    
+    return false;
+ }
+  if (!file){
+      open();
+   mt.innerText="Empty file Input";
+    md.innerHTML="Looks like you didn't select any file to upload, please recheck and reselect a file";
+    setTimeout(close,3000);
+  return false;
+  }
+
+  showLoading();
+  const userId = auth.currentUser.uid;
+  const fileRef = storage.ref(`${userId}/${file.name}`);
+  fileRef.put(file).then(() => {
+    return fileRef.getDownloadURL().then((url) => {
+      return database.ref(`users/${userId}/files`).push({ name: file.name, url, Status:plan });
+    });
+  }).then(() => {
+  open();
+   mt.innerText="Upload status";
+    md.innerHTML="Your file is uploaded successfully😊!";
+    setTimeout(close,3000);
+  
+    
+    loadUserFiles(userId);
+  }).catch((error) =>{
+      open();
+   mt.innerText="Unexpected Error";
+    md.innerHTML=error.message;
+    setTimeout(close,3000);
+  })
+    
+});
+
+          </script>
+</body>
+</html>
