@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BOLOKA Storage App, your trusted partner in secure and efficient file management. Founded by Poloko Pule, our mission is to simplify how you store, organize, and manage your digital files.">
+	  <meta name="keywords" content="storage app, boloka app, file manager, Free online storage, online storage,Lesotho online storage, apps by poloko pule, apps by BD-school of creation, 2025 apps release, 2025 apps, Etsa fela plan, Mahala plan , Morena plan">
+  	<meta name="author" content="Poloko Edward Pule">
+<link rel="icon" href="logo.png">
+  <title>Boloka Online Storage App</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0;
+          height: 80vh;
+        overflow-y: scroll;
+
+    
+    
+     }
+    nav { background: #fff;
+    border-bottom: 1px solid #007bff; padding: 10px; color: white; display: flex; justify-content: space-between;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+    nav a {  text-align: center;color:white; 
+    background:#007bff; width: min(70px); font-size: 12px;border-radius: 10px;padding: 10px;
+    text-decoration: none; margin: 0 10px; }
+    .hidden { display: none; }
+    .container { padding: 20px; }
+    #plans, #auth, #mainContent { display: none; }
+    #fileList div { margin: 5px 0; padding: 10px; background: #f1f1f1; border-radius: 5px; }
+    .loading-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); color: white; display: flex; justify-content: center; align-items: center; z-index: 1000; }
+    
+    
+     .head{
+          padding:20px;
+          font-weight:600;
+          letter-spacing: 2px;
+          position: relative;
+          width:50%;
+          font-size: 3em;
+          
+      }
+      
+      
+     
+     h2{
+         position: relative;
+         
+     }
+     .card{
+         padding: 20px;
+  max-width: 70%;
+  margin: auto;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 50px;
+
+     }
+     #plans{
+         display: flex;flex-wrap: wrap;
+         height: 90vh;
+         padding:30px;
+         
+         overflow-y: scroll;
+     }
+      .flex{
+          display: flex;
+           gap: 10px;
+      }
+      
+      .flex > button:first-child{
+      
+          width: min(60%);
+          
+      }
+      
+      .flex > button:last-child{
+        background-color: #dedede;  
+        color:#000;
+      }
+      .m{
+          background:#ffa995;
+          color:#000;
+         transition: all 0.3s;
+         letter-spacing: 1px;
+      }
+      .m:hover{
+          color:#fff;
+          letter-spacing: 3px;
+      }
+ .l:hover{
+          color:#fff;
+          letter-spacing: 3px;
+      }
+
+    .l{
+          background:#00ffc0;
+          color:#000;
+          transition: all 0.3s;
+         letter-spacing: 1px;
+      }
+h2:before {
+         content:"";
+         width:100px;height:5px;
+         background:#007bff;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+h2:before {
+         content:"";
+         width:100px;height:5px;
+         background:#007bff;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+     
+     .efp,.mp{
+         position:relative;
+     }
+   .efp:before {
+         content:"";
+         width:100px;height:5px;
+         background:#ffa995;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+    .mp:before {
+         content:"";
+         width:100px;height:5px;
+         background:#00ffc0;
+         position: absolute;
+         bottom:0;
+         border-radius: 30px 10px;
+         
+     }
+     
+    #plans > .card:nth-child(1){
+         border-top: 20px solid #007bff;
+     }
+     .card{
+         border-top: 20px solid  #007bff;
+         box-shadow: 0 0 10px rgba(0, 123, 255, 0.1);
+     }
+ 
+    .pm{
+         border-top: 20px solid #00ffc0;
+         box-shadow: 0 0 10px rgba(0, 255, 192, 0.1);
+     }
+    .pfe{
+         border-top: 20px solid #ffa995;
+         box-shadow: 0 0 10px rgba(255, 149, 169, 0.1);
+     }
+    .plan1{
+        border-top: 20px solid #007bff;
+    }
+    #userMenu{
+        display: flex;
+       float: right;
+       flex-wrap: wrap;
+       gap: 4px;
+    }
+    #alert{
+        padding: 10px;
+        
+        border-radiua: 5px;
+       display:none;
+       
+       
+    }
+    
+    .good{
+        background: green;color:#fff;
+    }
+    .bad{
+        background:red;
+        color:#fff;
+    }
+    .s{
+        font-size: 10px;
+    }
+    .footer{
+    padding: 10px;
+    width: min(90%);
+    background:#fff;
+    position: absolute;
+    bottom:0px;
+    left:0;
+    z-index: 1;
+    }
+    textarea {
+        width: min(90%);
+        padding: 10px;
+        outline: none;
+    }
+    
+    .modal{
+        position:fixed;
+        top:0;
+        left:0;
+        width: 100%;
+        height: 100vh;
+        display: none;
+        flex-direction: column;
+        align-items:center;
+        justify-content: center;
+        background: rgba(0,0,0,0.1);
+        z-index: 1;
+    }
+    .cont{
+        padding:20px;
+        background: #fff;
+        width: min(50%);
+        border-radius: 10px;
+        
+    }
+   .center{
+       width: min(90%);
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+   }
+  </style>
+</head>
+<body>
+  <header id="navbar">
+    <nav>
+      <span id="appTitle">
+          <img src="b.jpg" width="150px" alt="">
+           </span>
+      <div id="userMenu">
+        <a href="#" id="loginNav">Login</a>
+        <a href="#" id="showHome" class="hidden">home</a>
+        <a href="#" id="logoutNav" class="hidden">Logout</a>
+        <a href="#" id="about" >About Us</a>
+      </div>
+    </nav>
+  </header>
+
+ 
+  <!-- Plans Section -->
+  <div id="plans">
+      <div class="center">         
+          <h2>Amazing Plans</h2>
+          <span>Choose your plan to use everyday</span>
+    </div>
+         
+          
+       
+     
+    <div class="card">
+        <h2>Mahala Plan</h2>
+        <span>Mahala plan it is a 1 month free plan   that allows you to store up to 40 images only png and jpg formats. Boloka foto tsa hao le rona!!
+      </span>
+        <ul>
+            <li>Storage: 50MB</li>
+            <li>File to be saved: png,jpg</li>
+        </ul>
+        <button id="showLoginForm3">Try it Now</button>
+    </div>
+
+<div class="card pfe">
+        <h2 class="efp">Etsa fela Plan</h2>
+        <img src="efp.png" width="40" alt="">
+        <span>Etsa fela plan it is  the  most affordable plans on Boloka app, with this plan you can save up to 200 files like images,documents and videos</span>
+        <ul>
+            <li>Storage: 500MB</li>
+            <li>File to be saved: png,jpg,pdf,mp4</li>
+            <li>videos duration: up to 30 minutes long</li>
+            <li>Documents size: 1/20 MB</li>
+            <li>Price: R38/per month</li>
+            <li>payment method: Mpesa,Ecocash and Credit cards</li>
+        </ul>
+        <button class="m"> Subscribe - R38/PM</button>
+
+    </div>
+
+<div class="card pm">
+        <h2 class="mp">Morena Plan</h2> <img src="mp.png" alt="" width="40">
+        <span>Be a king! Eba morena!, Pay once use Forever with this plan you can save any file type without being worried about file size and paying again. i know it is crazy but with just R100 you unlock every feature and get a best storage to save your files</span>
+        <ul>
+            <li>Storage: 16GB</li>
+            <li>File to be saved: png,jpg,mp3,m4a,mkv. many more</li>
+            <li>video duration: unlimited</li>
+            <li>Price: R100 - once off</li>
+            <li>Features: <ul>
+                <li>chat group</li>
+                <li>lock and share files</li>
+                <li>Delete, edit and update files</li>
+                <li>automatically uploads recent files</li>
+            </ul></li>
+        </ul>
+        <button class="l"> Subscribe - R100</button>
+    </div>
+
+<br><br><br><br><br><br><br><br><br>
+
+</div>
+
+<div id="auth" class="container">
+  <!-- Register Form -->
+  <div id="register" class="hidden">
+    <h2>Register</h2>
+    <div id="alert"> </div>
+    <input type="email" id="regEmail" placeholder="Email"><br>
+    <input type="password" id="regPassword" placeholder="Password"><br>
+    <button id="registerBtn">Register</button>
+    
+  </div>
+
+  <!-- Login Form -->
+  <div id="login" class="hidden">
+    <h2>Login</h2>
+    <div class="alert"> </div>
+    <input type="email" id="loginEmail" placeholder="Email"><br>
+    <input type="password" id="loginPassword" placeholder="Password"><br>
+    <button id="loginBtn">Login</button>
+    <p>        
+      <a href="#" id="showForgotPasswordForm">Forgot Password?</a>
+    </p>
+  </div>
+<div id="EFP" class="hidden">
+    <h2>Etsa fela Plan!!</h2>
+         <span>
+       <p><mark>Caution:</mark> make sure that after clicking  claim you will pay within 24hours or else your email address will be banned, meaning  you will be unable to use this app again.
+    </p>   
+         <p>Note that this part of the app is very serious and can affect your files and logins, so please make sure that you click the claim only if your ready to pay. After paying we will immediately  Activate the features that comes with this plan. Before using "ETSA FELA PLAN" please try "MAHALA Plan" Because you will not successfully get this plan without MAHALA PLAN</p>
+      </span>
+    <div class="alert"> </div>
+    <input type="email" id="loginEmail" placeholder="Email"><br>
+    <input type="number" id="loginPassword" placeholder="Phone number">
+    <span class="s">*the above phone number must match the number you are going to pay with</span><br>
+    <input type="text" id="loginPassword" placeholder="Mpesa/Ecocash full Names">
+    
+    <button id="loginBtn">claim</button>
+    
+  </div>
+  
+  
+ <div id="MP" class="hidden">
+    <h2>Morena Plan</h2>
+         <span>
+       <p><mark>Caution:</mark> make sure that after clicking  claim you will pay within 24hours or else your email address will be banned, meaning  you will be unable to use this app again.
+    </p>   
+         <p>Note that this part of the app is very serious and can affect your files and logins, so please make sure that you click the claim only if your ready to pay. After paying we will immediately  Activate the features that comes with this plan. Before using "ETSA FELA PLAN" please try "MAHALA Plan" Because you will not successfully get this plan without MAHALA PLAN</p>
+      </span>
+    <div class="alert"> </div>
+    <input type="email" id="loginEmail" placeholder="Email"><br>
+    <input type="number" id="loginPassword" placeholder="Phone number">
+    <span class="s">*the above phone number must match the number you are going to pay with</span><br>
+    <input type="text" id="loginPassword" placeholder="Mpesa/Ecocash full Names">
+    
+    <button id="loginBtn">claim</button>
+    
+  </div>
+ 
+ 
+ 
+  <!-- Forgot Password Form -->
+  <div id="forgotPassword" class="hidden">
+    <h2>Forgot Password</h2>
+    <div class="alert"> </div>
+    <input type="email" id="forgotPasswordEmail" placeholder="Enter your email"><br>
+    <button id="resetPasswordBtn">Reset Password</button>
+    <p><a href="#" id="showLoginForm2">Back to Login</a></p>
+  </div>
+    <div id="aboutUs" class="hidden">
+    <h2>About Boloka File Storage app</h2>
+    
+    
+    <p>
+        
+
+Welcome to BOLOKA Storage App, your trusted partner in secure and efficient file management. Founded by Poloko Pule, our mission is to simplify how you store, organize, and manage your digital files.
+<br><br>
+With BOLOKA, you can effortlessly back up your files, access them from anywhere, and keep your data safe. Whether you're a professional looking for seamless file organization or an everyday user in need of reliable storage solutions, our app is designed with you in mind.
+<br><br>
+At BOLOKA, we prioritize user-friendly interfaces, cutting-edge security, and innovative features to make your file management experience as smooth as possible.
+<br><br>
+Thank you for choosing BOLOKA Storage App — where your files are safe, accessible, and always organized.
+
+
+  
+        
+    </p>
+    <h2>Feedback</h2>
+    <textarea placeholder="Are you enjoying Boloka storage App?" id="feedback"></textarea><br>
+    <span>*Make sure you have WhatsApp installed because the feedback will be directly received by the owner of the app</span><br>
+    <button onclick="Send()">Send</button>
+      </div>
+  
+  
+  
+  
+  
+</div>
+  <!-- Main Content -->
+  <div id="mainContent" class="container">
+    
+    
+    <button id="uploadFiles">Upload File</button>
+    <h3>Your Files</h3>
+    <div id="fileList"></div>
+  </div>
+<div class="modal">
+    
+    <div class="cont">
+        <h2>Title for modal</h2>
+        <p>Message for modal</p>
+    </div>
+</div>
+  <script>
+      
+      
+      
+      
+      
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyABQqlqvqqsrb2B7K8URa3Mj2BToXsabPQ",
+      authDomain: "black-dox.firebaseapp.com",
+      databaseURL: "https://black-dox.firebaseio.com",
+      projectId: "black-dox",
+      storageBucket: "black-dox.appspot.com",
+      messagingSenderId: "45035762443",
+      appId: "1:45035762443:web:4101a6774e6f4f1d15e80e",
+      measurementId: "G-B7HB0T95TP"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const storage = firebase.storage();
+    const database = firebase.database();
+
+    // DOM Elements
+    const plans = document.getElementById("plans");
+    const authDiv = document.getElementById("auth");
+    const registerDiv = document.getElementById("register");
+    const loginDiv = document.getElementById("login");
+    const mainContent = document.getElementById("mainContent");
+    const fileInput = document.getElementById("fileInput");
+    const fileList = document.getElementById("fileList");
+    const loadingModal = document.getElementById("loadingModal");
+    var plan="Mahala";
+    var showhome = document.querySelector("#showHome");
+    var showlogin = document.querySelector("#loginNav");
+    var efp = document.querySelector(".m");
+    var mp = document.querySelector(".l");
+    var EFP = document.querySelector("#EFP");
+    var MP = document.querySelector("#MP");
+    var title = document.querySelector("#appTitle");
+    var logout = document.querySelector("#logoutNav");
+    var about = document.querySelector("#about");
+    var us = document.querySelector("#aboutUs");
+    var modal = document.querySelector (".modal");
+    var mt = document.querySelector(".cont > h2");
+    var md = document.querySelector(".cont > p");
+    // Show Register Form
+    
+function open() {
+   modal.style.display="flex";
+}
+function close() {
+   modal.style.display="none";
+}
+    // Show Login Form
+    document.getElementById("loginNav").addEventListener("click", (e) => {
+    authDiv.classList.remove("plan1");
+      plans.style.display = "none";
+      authDiv.style.display = "block";
+      showhome.classList.remove("hidden");
+      showlogin.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      registerDiv.classList.add("hidden");
+      EFP.classList.add("hidden");
+      MP.classList.add("hidden");
+      us.classList.add("hidden");
+      about.classList.add("hidden");
+    });
+    
+    function Send() {
+    var message = document.querySelector("#feedback");
+    var phone  ="+26663414582";
+   open();
+   mt.innerText="Sending feedback";
+    md.innerHTML="preparing WhatsApp api to redirect  you to the WhatsApp chat....";
+    setTimeout(()=>{
+       close(); window.location.assign(`https://api.whatsapp.com/send?phone=${phone}&text=${message.value}@feedback_Boloka_storage_app`);
+    },3000); 
+    
+    
+        
+    }
+    document.getElementById("showHome").addEventListener("click", () => {
+    authDiv.classList.remove("plan1");
+      plans.style.display = "block";
+      authDiv.style.display = "none";
+      showhome.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      registerDiv.classList.add("hidden");
+      showlogin.classList.remove("hidden");
+      EFP.classList.add("hidden");
+     MP.classList.add("hidden");
+     about.classList.remove("hidden");
+     us.classList.add("hidden");
+     
+    });
+    
+    
+    
+// Show Forgot Password Form
+document.getElementById("showForgotPasswordForm").addEventListener("click", () => {
+  loginDiv.classList.add("hidden");
+  registerDiv.classList.add("hidden");
+ authDiv.classList.remove("plan1"); document.getElementById("forgotPassword").classList.remove("hidden");
+  EFP.classList.add("hidden");
+  MP.classList.add("hidden");
+  us.classList.add("hidden");
+  about.classList.add("hidden");
+});
+
+//efp 
+efp.addEventListener("click", () => {
+      plans.style.display = "none";
+      authDiv.style.display = "block";
+      loginDiv.classList.add("hidden");
+      registerDiv.classList.add("hidden");
+      EFP.classList.remove("hidden");
+      showhome.classList.remove("hidden");
+      authDiv.classList.add("plan1");
+      MP.classList.add("hidden");
+      document.getElementById("forgotPassword").classList.add("hidden");
+      us.classList.add("hidden");
+      about.classList.add("hidden");
+    });
+    
+    about.addEventListener("click", () => {
+      plans.style.display = "none";
+      authDiv.style.display = "block";
+      loginDiv.classList.add("hidden");
+      registerDiv.classList.add("hidden");
+      EFP.classList.remove("hidden");
+      showhome.classList.remove("hidden");
+      authDiv.classList.add("plan1");
+      MP.classList.add("hidden");
+      document.getElementById("forgotPassword").classList.add("hidden");
+      us.classList.remove("hidden");
+      EFP.classList.add("hidden");
+     MP.classList.add("hidden");
+     showlogin.classList.add("hidden");
+     about.classList.add("hidden");
+    });
+    
+    //efp 
+    
+       
+mp.addEventListener("click", () => {
+      plans.style.display = "none";
+      authDiv.style.display = "block";
+      loginDiv.classList.add("hidden");
+      registerDiv.classList.add("hidden");
+      EFP.classList.add("hidden");
+      MP.classList.remove("hidden");
+      showhome.classList.remove("hidden");
+      authDiv.classList.add("plan1");
+      EFP.classList.add("hidden");
+      us.classList.add("hidden");
+      document.getElementById("forgotPassword").classList.add("hidden");
+      about.classList.add("hidden");
+    });
+
+    
+// Show Login Form from Forgot Password
+document.getElementById("showLoginForm2").addEventListener("click", () => {
+ authDiv.classList.remove("plan1"); document.getElementById("forgotPassword").classList.add("hidden");
+  loginDiv.classList.remove("hidden");
+  EFP.classList.add("hidden");
+  MP.classList.add("hidden");
+  us.classList.add("hidden");
+  about.classList.add("hidden");
+});
+
+document.getElementById("showLoginForm3").addEventListener("click", () => {
+ plans.style.display = "none";
+ showhome.classList.remove("hidden");
+      authDiv.style.display = "block";
+      registerDiv.classList.remove("hidden");
+      loginDiv.classList.add("hidden");
+      EFP.classList.add("hidden");
+      MP.classList.add("hidden");
+      document.getElementById("forgotPassword").classList.add("hidden");
+      us.classList.add("hidden");
+      about.classList.add("hidden");
+      showlogin.classList.add("hidden");
+});
+
+// Handle Password Reset
+document.getElementById("resetPasswordBtn").addEventListener("click", () => {
+  const email = document.getElementById("forgotPasswordEmail").value;
+
+  if (!email) {
+   open();
+   mt.innerText="Empty Input!!";
+    md.innerHTML="Please enter your email!";
+    setTimeout(close,3000);
+    
+    return;
+  }
+
+ 
+    open();
+   mt.innerText="Generating link";
+    md.innerHTML="This will take few minutes...";
+    setTimeout(close,3000);
+  auth.sendPasswordResetEmail(email)
+    .then(() => {
+      
+      
+        open();
+   mt.innerText="Empty Input!!";
+    md.innerHTML="Password reset email sent! Please check your inbox.";
+    setTimeout(close,3000);
+      document.getElementById("forgotPassword").classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+    })
+    .catch((error) => {
+      
+      
+        open();
+   mt.innerText="Unexpected Error";
+    md.innerHTML=error.message;
+    setTimeout(close,3000);
+          })
+    
+});
+    // Logout
+    document.getElementById("logoutNav").addEventListener("click", () => {
+      open();
+   mt.innerText="Logout";
+    md.innerHTML="logging out..";
+    setTimeout(close,3000);
+      
+      setTimeout(auth.signOut(),1100);
+      mainContent.style.display = "none";
+      plans.style.display = "block";
+      document.getElementById("logoutNav").classList.add("hidden");
+      document.getElementById("loginNav").classList.remove("hidden");
+    });
+if(navigator.onLine){
+  open();
+   mt.innerText="Internet Connection";
+    md.innerHTML="Your back online, start uploading while the connectionis still stable";
+    setTimeout(close,3000);   
+    // Monitor Auth State
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+      open();
+   mt.innerText="Message from Admin";
+    md.innerHTML="Looks like your still logged in, please wait while we restore your logins..";
+    setTimeout(close,3000);
+   
+        authDiv.style.display = "none";
+        plans.style.display = "none";
+        mainContent.style.display = "block";
+        document.getElementById("logoutNav").classList.remove("hidden");
+        document.getElementById("loginNav").classList.add("hidden");
+        loadUserFiles(user.uid);
+        var em =   localStorage.getItem("email");
+     title.innerHTML=`<h2>${user.email.split("@")[0]}</h2>`;
+     showlogin.classList.add("hidden");
+     logout.classList.remove("hidden");
+     us.classList.add("hidden");
+     about.classList.add("hidden");
+     showhome.classList.add("hidden");
+     
+     
+      } else {
+        mainContent.style.display = "none";
+        plans.style.display = "block";
+     title.innerHTML=`<img src="b.jpg" width="150px" alt="">`;
+     about.classList.remove("hidden");
+     open();
+   mt.innerText="Message from Admin";
+    md.innerHTML="Try Mahala Plan to start saving files😊  Otherwise Enjoy our services";
+    setTimeout(close,3000);
+    
+ 
+      }
+    });
+    
+    
+    }else{
+    open();
+   mt.innerText="Internet Connection";
+    md.innerHTML="Oops!!😑, your currently offline. please try the following<hr><li>Turning off Airplane mode</li><li>switching to stable Wifi network</li><li>Turning on your mobile data</li>";
+    setTimeout(close,6000); 
+}
+
+    
+   // Register
+document.getElementById("registerBtn").addEventListener("click", (event) => {
+  event.preventDefault();
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+  open();
+   mt.innerText="Creating Account";
+    md.innerHTML="creating your account, please wait...";
+    
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+    mt.innerText="Complete"
+    md.innerHTML="Account created successfully😊";
+       setTimeout(close,3000); 
+    })
+    .catch((error) =>{
+         open();
+   mt.innerText="Unexpected Error";
+    md.innerHTML=error.message;
+    setTimeout(close,3000); 
+    });
+});
+
+
+
+
+// Login
+document.getElementById("loginBtn").addEventListener("click", (event) => {
+  event.preventDefault();
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+localStorage.setItem("email",email);
+  open();
+   mt.innerText="Seaching";
+    md.innerHTML="Please wait, we are still searching for your account";
+    setTimeout(close,3000);
+
+  
+  auth.signInWithEmailAndPassword(email, password)
+    .catch((error) => {
+          open();
+   mt.innerText="Unexpected Error";
+    md.innerHTML=error.message;
+    setTimeout(close,3000);
+    });
+});
+
+
+
+
+    // Upload File
+document.getElementById("uploadFiles").addEventListener("click", (event) => {
+  event.preventDefault(); // Prevent page refresh
+window.location.assign("upload.html");
+ });
+
+    // Load User Files
+    function loadUserFiles(userId) {
+    fileList.innerHTML="Loading your files....";
+      
+      database.ref(`users/${userId}/files`).once("value", (snapshot) => {
+      fileList.innerHTML = "";
+        snapshot.forEach((child) => {
+          const file = child.val();
+          const fileDiv = document.createElement("div");
+          fileDiv.textContent = file.name;
+          const link = document.createElement("a");
+          link.href = file.url;
+          link.textContent = " Download";
+          link.target = "_blank";
+          fileDiv.appendChild(link);
+          fileList.appendChild(fileDiv);
+        });
+      });
+    }
+
+      </script>
+</body>
+</html>
