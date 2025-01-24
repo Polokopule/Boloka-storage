@@ -42,7 +42,7 @@ header nav ul li a {
 }
 #auth, #mainContent {
   padding: 20px;
-  width:min(98%);
+  width:min(400px);
   margin: auto;
   
   background: white;
