@@ -33,208 +33,13 @@
     .loading-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); color: white; display: flex; justify-content: center; align-items: center; z-index: 1000; }
     
     
-     .head{
-          padding:20px;
-          font-weight:600;
-          letter-spacing: 2px;
-          position: relative;
-          width:50%;
-          font-size: 3em;
-          
-      }
-      
-      
-     
-     h2{
-         position: relative;
-         
-     }
-     .card{
-         padding: 20px;
-  max-width: 70%;
-  margin: auto;
-  background: white;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-top: 50px;
-
-     }
-     #plans{
-         display: flex;flex-wrap: wrap;
-         height: 90vh;
-         padding:30px;
-         
-         overflow-y: scroll;
-     }
-      .flex{
-          display: flex;
-           gap: 10px;
-      }
-      
-      .flex > button:first-child{
-      
-          width: min(60%);
-          
-      }
-      
-      .flex > button:last-child{
-        background-color: #dedede;  
-        color:#000;
-      }
-      .m{
-          background:#ffa995;
-          color:#000;
-         transition: all 0.3s;
-         letter-spacing: 1px;
-      }
-      .m:hover{
-          color:#fff;
-          letter-spacing: 3px;
-      }
- .l:hover{
-          color:#fff;
-          letter-spacing: 3px;
-      }
-
-    .l{
-          background:#00ffc0;
-          color:#000;
-          transition: all 0.3s;
-         letter-spacing: 1px;
-      }
-h2:before {
-         content:"";
-         width:100px;height:5px;
-         background:#007bff;
-         position: absolute;
-         bottom:0;
-         border-radius: 30px 10px;
-         
-     }
-h2:before {
-         content:"";
-         width:100px;height:5px;
-         background:#007bff;
-         position: absolute;
-         bottom:0;
-         border-radius: 30px 10px;
-         
-     }
-     
-     .efp,.mp{
-         position:relative;
-     }
-   .efp:before {
-         content:"";
-         width:100px;height:5px;
-         background:#ffa995;
-         position: absolute;
-         bottom:0;
-         border-radius: 30px 10px;
-         
-     }
-    .mp:before {
-         content:"";
-         width:100px;height:5px;
-         background:#00ffc0;
-         position: absolute;
-         bottom:0;
-         border-radius: 30px 10px;
-         
-     }
-     
-    #plans > .card:nth-child(1){
-         border-top: 20px solid #007bff;
-     }
-     .card{
-         border-top: 20px solid  #007bff;
-         box-shadow: 0 0 10px rgba(0, 123, 255, 0.1);
-     }
- 
-    .pm{
-         border-top: 20px solid #00ffc0;
-         box-shadow: 0 0 10px rgba(0, 255, 192, 0.1);
-     }
-    .pfe{
-         border-top: 20px solid #ffa995;
-         box-shadow: 0 0 10px rgba(255, 149, 169, 0.1);
-     }
-    .plan1{
-        border-top: 20px solid #007bff;
-    }
-    #userMenu{
-        display: flex;
-       float: right;
-       flex-wrap: wrap;
-       gap: 4px;
-    }
-    #alert{
-        padding: 10px;
-        
-        border-radiua: 5px;
-       display:none;
-       
-       
-    }
-    
-    .good{
-        background: green;color:#fff;
-    }
-    .bad{
-        background:red;
-        color:#fff;
-    }
-    .s{
-        font-size: 10px;
-    }
-    .footer{
-    padding: 10px;
-    width: min(90%);
-    background:#fff;
-    position: absolute;
-    bottom:0px;
-    left:0;
-    z-index: 1;
-    }
-    textarea {
-        width: min(90%);
-        padding: 10px;
-        outline: none;
-    }
-    
-    .modal{
-        position:fixed;
-        top:0;
-        left:0;
-        width: 100%;
-        height: 100vh;
-        display: none;
-        flex-direction: column;
-        align-items:center;
-        justify-content: center;
-        background: rgba(0,0,0,0.1);
-        z-index: 1;
-    }
-    .cont{
-        padding:20px;
-        background: #fff;
-        width: min(50%);
-        border-radius: 10px;
-        
-    }
-   .center{
-       width: min(90%);
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-   }
   </style>
 </head>
 <body>
   <header id="navbar">
     <nav>
       <span id="appTitle">
-          <img src="b.jpg" width="150px" alt="">
+          
            </span>
       <div id="userMenu">
         <a href="#" id="loginNav">Login</a>
@@ -335,12 +140,12 @@ h2:before {
          <p>Note that this part of the app is very serious and can affect your files and logins, so please make sure that you click the claim only if your ready to pay. After paying we will immediately  Activate the features that comes with this plan. Before using "ETSA FELA PLAN" please try "MAHALA Plan" Because you will not successfully get this plan without MAHALA PLAN</p>
       </span>
     <div class="alert"> </div>
-    <input type="email" id="loginEmail" placeholder="Email"><br>
-    <input type="number" id="loginPassword" placeholder="Phone number">
+    <input type="email" id="efp_email" placeholder="Email"><br>
+    <input type="number" id="efp_number" placeholder="Phone number">
     <span class="s">*the above phone number must match the number you are going to pay with</span><br>
-    <input type="text" id="loginPassword" placeholder="Mpesa/Ecocash full Names">
+    <input type="text" id="efp_names" placeholder="Mpesa/Ecocash full Names">
     
-    <button id="loginBtn">claim</button>
+    <button id="loginBtn" onclick="Claim('EFP')">claim</button>
     
   </div>
   
@@ -417,6 +222,7 @@ Thank you for choosing BOLOKA Storage App — where your files are safe, accessi
         <p>Message for modal</p>
     </div>
 </div>
+ 
   <script>
       
       
@@ -685,7 +491,7 @@ if(navigator.onLine){
       } else {
         mainContent.style.display = "none";
         plans.style.display = "block";
-     title.innerHTML=`<img src="b.jpg" width="150px" alt="">`;
+     title.innerHTML=`<h2>Boloka</h2>`;
      about.classList.remove("hidden");
      open();
    mt.innerText="Message from Admin";
@@ -698,10 +504,13 @@ if(navigator.onLine){
     
     
     }else{
+    plans.style.display = "block";
     open();
    mt.innerText="Internet Connection";
     md.innerHTML="Oops!!😑, your currently offline. please try the following<hr><li>Turning off Airplane mode</li><li>switching to stable Wifi network</li><li>Turning on your mobile data</li>";
-    setTimeout(close,6000); 
+    setTimeout(close,4000); 
+    
+    
 }
 
     
