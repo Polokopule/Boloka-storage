@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="BOLOKA Storage App, your trusted partner in secure and efficient file management. Founded by Poloko Pule, our mission is to simplify how you store, organize, and manage your digital files.">
@@ -47,7 +47,71 @@
         width: min(auto);
         border-radius: 10px 20px 10px;
     }
-    
+    #fileList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .file-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .file-card iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .file-card h4 {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .file-card button {
+      flex: 1;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .view-button {
+      background-color: #007bff;
+    }
+
+    .download-button {
+      background-color: #28a745;
+    }
+
+    .view-button:hover {
+      background-color: #0056b3;
+    }
+
+    .download-button:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
@@ -606,32 +670,61 @@ localStorage.setItem("email",email);
 
 
 
-    // Upload File
-document.getElementById("uploadFiles").addEventListener("click", (event) => {
-  event.preventDefault(); // Prevent page refresh
-window.location.assign("upload.html");
- });
-
     // Load User Files
     function loadUserFiles(userId) {
-    fileList.innerHTML="Loading your files....";
-      
+      const fileList = document.getElementById("fileList");
+      fileList.innerHTML = "Loading your files...";
+
+      // Replace with your Firebase database reference
       database.ref(`users/${userId}/files`).once("value", (snapshot) => {
-      fileList.innerHTML = "";
+        fileList.innerHTML = "";
         snapshot.forEach((child) => {
           const file = child.val();
-          const fileDiv = document.createElement("div");
-          fileDiv.textContent = file.name;
-          const link = document.createElement("a");
-          link.href = file.url;
-          link.textContent = " Download";
-          link.target = "_blank";
-          fileDiv.appendChild(link);
-          fileList.appendChild(fileDiv);
+          const fileCard = document.createElement("div");
+          fileCard.className = "file-card";
+
+          // File Preview
+          const iframe = document.createElement("iframe");
+          iframe.src = file.url;
+          fileCard.appendChild(iframe);
+
+          // File Name
+          const fileName = document.createElement("h4");
+          fileName.textContent = file.name;
+          fileCard.appendChild(fileName);
+
+          // Buttons in a row
+          const buttonRow = document.createElement("div");
+          buttonRow.className = "button-row";
+
+          // View Button
+          const viewButton = document.createElement("button");
+          viewButton.className = "view-button";
+          viewButton.textContent = "View";
+          viewButton.onclick = () => {
+            window.open(file.url, "_blank");
+          };
+          buttonRow.appendChild(viewButton);
+
+          // Download Button
+          const downloadButton = document.createElement("button");
+          downloadButton.className = "download-button";
+          downloadButton.textContent = "Download";
+          downloadButton.onclick = () => {
+            const link = document.createElement("a");
+            link.href = file.url;
+            link.download = file.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          };
+          buttonRow.appendChild(downloadButton);
+
+          fileCard.appendChild(buttonRow);
+          fileList.appendChild(fileCard);
         });
       });
     }
-
       </script>
 </body>
 </html>
