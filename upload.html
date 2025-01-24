@@ -347,15 +347,7 @@ document.getElementById("uploadFiles").addEventListener("click", (event) => {
   event.preventDefault(); // Prevent page refresh
 
   const file = fileInput.files[0];
- var type = file.name.split(".")[1];
- if(plan != "Mahala" && type != "jpg" || type != "png" ){
-    open();
-   mt.innerText="Out of Your Plan";
-    md.innerHTML="Your currently using Mahala plan which does not allow you to store other files rather than images";
-    setTimeout(close,3000); 
-    
-    return false;
- }
+ 
   if (!file){
       open();
    mt.innerText="Empty file Input";
@@ -364,7 +356,7 @@ document.getElementById("uploadFiles").addEventListener("click", (event) => {
   return false;
   }
 
-  showLoading();
+  
   const userId = auth.currentUser.uid;
   const fileRef = storage.ref(`${userId}/${file.name}`);
   fileRef.put(file).then(() => {
